@@ -45,7 +45,7 @@ edge_roll <- function(n){
 	stats <- calculate_roll_stats(orig_roll)
 	stats[["Roll"]] <- roll_m
 	stats[["Sums"]] <- stats[["Result"]]	
-	pretty_print(stats)
+	return(stats)
 }
 
 
@@ -58,7 +58,7 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5,6)){
 
 	# Glitch status calculation
 	glitch <- (hits - misses) < 0 
-	critical_glitch <- (misses / total > 0.5) & glitch
+	critical_glitch <- (misses / total >= 0.5) & glitch
 	glitch_status <- ifelse(glitch, yes = 1, no = 0)
 	glitch_status <- ifelse(critical_glitch, yes = 2, no = glitch_status)
 
@@ -106,6 +106,7 @@ extended_test <- function(pool, target=NA){
 			# Prompt
 			prompt <- prompt_function("Reroll using edge?: [y/N]")
 			if(prompt %in% c("y", "yes")){
+				# Modify row names to indicate edge use
 				rownames(m)[counter] <- paste0("R", counter, "| E")
 				rownames(roll_m)[counter] <- paste0("R", counter, "| E")
 				edge <- F
@@ -137,7 +138,7 @@ extended_test <- function(pool, target=NA){
 	roll_m <- roll_m[rowSums(roll_m, na.rm = T) > 0, ]
 
 	res <- list(Roll = roll_m, Result = m, Sums = sums)
-	pretty_print(res)
+	return(res)
 }
 
 
@@ -188,10 +189,10 @@ if(!interactive()){
 	type <- ifelse(is.na(target), yes = 6, no = target)
 	x <- switch(task,
 	"help" = help_message(),
-	"extended" = extended_test(pool = dice, target = target),
-	"roll" = print(roll(n = dice, type = type)),
-	"simple_roll" = print(roll_simple(n = dice, type = type)),
-	"edge_roll" = edge_roll(dice),
-	... = help_message()
+	"extended" = pretty_print(extended_test(pool = dice, target = target)),
+	"roll" = print(calculate_roll_stats(roll(n = dice, type = type))),
+	"simple_roll" = print(roll_simple(n = dice, type = type), row.names = F),
+	"edge_roll" = pretty_print(edge_roll(dice)),
+	help_message()
 	)
 }

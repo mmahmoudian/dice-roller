@@ -1,12 +1,12 @@
 # shadowrunR
 
-roll_simple <- function(n, type=6){
+roll_simple <- function(n, type = 6){
 	roll <- sample(1:type, n, replace = T)
 	return(sort(roll))
 }
 
 
-roll <- function(n, type=6){
+roll <- function(n, type = 6){
 	n <- as.integer(n)
 	type <- as.integer(type)
 	roll <- sample(1:type, n, replace = T)
@@ -44,12 +44,12 @@ edge_roll <- function(n){
 	# Get stats for the modified roll
 	stats <- calculate_roll_stats(orig_roll)
 	stats[["Roll"]] <- roll_m
-	stats[["Sums"]] <- stats[["Result"]]	
+	stats[["Sums"]] <- stats[["Result"]]
 	return(stats)
 }
 
 
-calculate_roll_stats <- function(roll, miss = 1, hit = c(5,6)){
+calculate_roll_stats <- function(roll, miss = 1, hit = c(5, 6)){
 
 	# Calculate hits and misses
 	misses <- sum(roll[miss])
@@ -69,7 +69,7 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5,6)){
 }
 
 
-extended_test <- function(pool, target=NA){
+extended_test <- function(pool, target = NA){
 	pool <- as.integer(pool)
 	# Prepare result matrices by making a throwaway roll
 	s <- calculate_roll_stats(roll(1))
@@ -79,7 +79,7 @@ extended_test <- function(pool, target=NA){
 	roll_m <- matrix(nrow = pool, ncol = length(s_roll))
 	colnames(m) <- names(s_res)
 	rownames(m) <- paste0("R", 1:pool, "|")
-	colnames(roll_m) <- names(s_roll)	
+	colnames(roll_m) <- names(s_roll)
 	rownames(roll_m) <- paste0("R", 1:pool, "|")
 	rm(s, s_roll, s_res)
 
@@ -90,15 +90,15 @@ extended_test <- function(pool, target=NA){
 	# Populate result matrix
 	while(counter <= pool){
 		# Make the roll
-		r <- roll(pool-counter+1)
+		r <- roll(pool - counter + 1)
 		roll <- calculate_roll_stats(r)
 
 		# Add roll info
-		roll_m[counter,] <- roll[["Roll"]]
+		roll_m[counter, ] <- roll[["Roll"]]
 		m[counter, ] <- roll[["Result"]]
 
 		# Glitch reroll prompt
-		if(m[counter, "Glitch"] > 0  & edge ){
+		if((m[counter, "Glitch"] > 0) & edge){
 			# Give information
 			print(m[counter, ])
 			print(c("Total hits" = sum(m[, "Hit"], na.rm  = T), "Total glitches" = sum(m[, "Glitch"] > 0, na.rm  = T)))
@@ -188,11 +188,11 @@ if(!interactive()){
 	target <- as.integer(args[3])
 	type <- ifelse(is.na(target), yes = 6, no = target)
 	x <- switch(task,
-	"help" = help_message(),
-	"extended" = pretty_print(extended_test(pool = dice, target = target)),
-	"roll" = print(calculate_roll_stats(roll(n = dice, type = type))),
-	"simple_roll" = print(roll_simple(n = dice, type = type), row.names = F),
-	"edge_roll" = pretty_print(edge_roll(dice)),
-	help_message()
-	)
+	            "help"        = help_message(),
+	            "extended"    = pretty_print(extended_test(pool = dice, target = target)),
+	            "roll"        = print(calculate_roll_stats(roll(n = dice, type = type))),
+	            "simple_roll" = print(roll_simple(n = dice, type = type), row.names = F),
+	            "edge_roll"   = pretty_print(edge_roll(dice)),
+	            help_message()
+	            )
 }

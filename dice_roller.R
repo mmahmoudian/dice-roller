@@ -174,7 +174,7 @@ prompt_function <- function(msg = "Default message."){
 
 
 help_message <- function(){
-	message("Param 1: task to run [help|extended|roll|simple_roll|edge_roll]")
+	message("Param 1: Task to run [help|extended|roll|simple_roll|edge_roll]")
 	message("Param 2: Amount of dice to roll")
 	message("Param 3: Target hit amount for extended test OR Dice type for roll/simple_roll")
 }

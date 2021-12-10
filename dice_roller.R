@@ -12,9 +12,9 @@ roll <- function(n, type = 6){
 	roll <- sample(1:type, n, replace = T)
 	res_tbl <- integer(length = type)
 	names(res_tbl) <- paste0("#", 1:type)
-	t <- table(roll)
-	idx <- as.integer(names(t))
-	res_tbl[idx] <- t
+	tbl <- table(roll)
+	idx <- as.integer(names(tbl))
+	res_tbl[idx] <- tbl
 
 	return(res_tbl)
 }

@@ -69,6 +69,26 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5, 6)) {
 }
 
 
+probability_of_hits <- function(hits, pool, p_hit = 2 / 6) {
+    num_comb <- ncol(combn(pool, hits))
+    # Use the binomial probability formula to calculate the
+    # probabiltity of rolling exactly the given hit amount
+    prob <- num_comb * p_hit^hits * (1 - p_hit)^(pool - hits)
+    return(prob)
+}
+
+
+cumulative_prob_of_hits <- function(hits, pool, p_hit = 2 / 6) {
+    # Calculates the individual hit results for hits <= x <= pool,
+    # giving the probability of reaching at least the given hit amount
+    probs <- vapply(hits:pool, numeric(1),
+        FUN = probability_of_hits,
+        pool = pool, p_hit = p_hit
+    )
+    return(sum(probs))
+}
+
+
 extended_test <- function(pool, target = NA) {
     pool <- as.integer(pool)
     # Prepare result matrices by making a throwaway roll

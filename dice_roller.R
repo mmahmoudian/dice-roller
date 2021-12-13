@@ -70,7 +70,7 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5, 6)) {
 
 
 probability_of_hits <- function(hits, pool, p_hit = 2 / 6) {
-    num_comb <- ncol(combn(pool, hits))
+    num_comb <- choose(pool, hits)
     # Use the binomial probability formula to calculate the
     # probabiltity of rolling exactly the given hit amount
     prob <- num_comb * p_hit^hits * (1 - p_hit)^(pool - hits)
@@ -194,7 +194,7 @@ prompt_function <- function(msg = "Default message.") {
 
 
 help_message <- function() {
-    message("Param 1: Task to run [help|extended|roll|simple_roll|edge_roll]")
+    message("Param 1: Task to run [help|extended|roll|simple_roll|edge_roll|roll_prob]")
     message("Param 2: Amount of dice to roll")
     message("Param 3: Target hit amount for extended test OR Dice type for roll/simple_roll")
 }
@@ -213,6 +213,7 @@ if (!interactive()) {
         "roll"        = print(calculate_roll_stats(roll(n = dice, type = type))),
         "simple_roll" = print(roll_simple(n = dice, type = type), row.names = F),
         "edge_roll"   = pretty_print(edge_roll(dice)),
+        "roll_prob"   = print(cumulative_prob_of_hits(target, dice)),
         help_message()
     )
 }

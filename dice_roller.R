@@ -81,11 +81,16 @@ probability_of_hits <- function(hits, pool, p_hit = 2 / 6) {
 cumulative_prob_of_hits <- function(hits, pool, p_hit = 2 / 6) {
     # Calculates the individual hit results for hits <= x <= pool,
     # giving the probability of reaching at least the given hit amount
-    probs <- vapply(hits:pool, numeric(1),
-        FUN = probability_of_hits,
-        pool = pool, p_hit = p_hit
-    )
-    return(sum(probs))
+    if (hits > pool) {
+        prob <- 0
+    } else {
+        all_probs <- vapply(hits:pool, numeric(1),
+            FUN = probability_of_hits,
+            pool = pool, p_hit = p_hit
+        )
+        prob <- sum(all_probs)
+    }
+    return(prob)
 }
 
 

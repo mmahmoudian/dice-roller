@@ -64,9 +64,10 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5, 6)) {
 
     # Create result list
     res <- c(total, hits, misses, glitch_status)
+    formatted <- paste0(hits, "/", misses, "/", total)
     names(res) <- c("Pool", "Hit", "Miss", "Glitch")
     if (type == 6) {
-        return(list(Roll = roll, Result = res))
+        return(list(Roll = roll, Result = res, Formatted = formatted))
     } else {
         return(list(Roll = roll, Result = "Not available for this roll yet"))
     }
@@ -116,6 +117,7 @@ extended_test <- function(pool, target = NA) {
     counter <- 1
     edge <- T
     cumsum <- 0
+    formatted_vec <- c()
 
     # Populate result matrix
     while (counter <= pool) {
@@ -126,7 +128,7 @@ extended_test <- function(pool, target = NA) {
         # Add roll info
         roll_m[counter, ] <- roll[["Roll"]]
         m[counter, ] <- c(roll[["Result"]], cumsum)
-
+        formatted_vec <- c(formatted_vec, roll[["Formatted"]])
 
         # Glitch reroll prompt
         if ((m[counter, "Glitch"] > 0) & edge) {
@@ -169,7 +171,7 @@ extended_test <- function(pool, target = NA) {
     m <- m[complete.cases(m), ]
     roll_m <- roll_m[rowSums(roll_m, na.rm = T) > 0, ]
 
-    res <- list(Roll = roll_m, Result = m, Sums = sums)
+    res <- list(Roll = roll_m, Result = m, Sums = sums, Formatted = formatted_vec)
     return(res)
 }
 
@@ -184,6 +186,10 @@ pretty_print <- function(res) {
     message()
     message("Total sums:")
     print(res[["Sums"]], quote = F, na.print = "")
+    message("---------------")
+    message()
+    message("Formatted rolls:")
+    cat(res[["Formatted"]], sep = "\n")
     message("---------------")
     message()
 }
@@ -222,7 +228,7 @@ if (!interactive()) {
     x <- switch(task,
         "help"        = help_message(),
         "extended"    = pretty_print(extended_test(pool = dice, target = target)),
-        "roll"        = print(calculate_roll_stats(roll(n = dice, type = type))),
+        "roll"        = print(calculate_roll_stats(roll(n = dice, type = type)), quote = F),
         "simple" = print(roll_simple(n = dice, type = type), row.names = F),
         "edge_roll"   = pretty_print(edge_roll(dice)),
         "roll_prob"   = print(cumulative_prob_of_hits(target, dice)),

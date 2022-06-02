@@ -65,7 +65,11 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5, 6)) {
     # Create result list
     res <- c(total, hits, misses, glitch_status)
     names(res) <- c("Pool", "Hit", "Miss", "Glitch")
-    return(list(Roll = roll, Result = res))
+    if (type == 6) {
+        return(list(Roll = roll, Result = res))
+    } else {
+        return(list(Roll = roll, Result = "Not available for this roll yet"))
+    }
 }
 
 
@@ -157,8 +161,8 @@ extended_test <- function(pool, target = NA) {
         }
         counter <- counter + 1
     }
-
-    sums <- colSums(m[,-5], na.rm = T)
+    # Remove cumsum column from sum results, useless
+    sums <- colSums(m[, -5], na.rm = T)
     sums["Glitch"] <- sum(m[, "Glitch"] > 0, na.rm = T)
 
     # Remove any full NA rows

@@ -188,7 +188,7 @@ pretty_print <- function(res) {
     print(res[["Sums"]], quote = F, na.print = "")
     message("---------------")
     message()
-    message("Formatted rolls:")
+    message("Formatted rolls (hit/miss/total):")
     cat(res[["Formatted"]], sep = "\n")
     message("---------------")
     message()

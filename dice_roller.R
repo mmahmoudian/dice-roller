@@ -58,7 +58,7 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5, 6)) {
 
     # Glitch status calculation
     glitch <- (hits - misses) < 0
-    critical_glitch <- (misses / total >= 0.5) & glitch
+    critical_glitch <- (misses / total > 0.5) & glitch
     glitch_status <- ifelse(glitch, yes = 1, no = 0)
     glitch_status <- ifelse(critical_glitch, yes = 2, no = glitch_status)
 
@@ -100,9 +100,9 @@ extended_test <- function(pool, target = NA) {
     s <- calculate_roll_stats(roll(1))
     s_roll <- s[["Roll"]]
     s_res <- s[["Result"]]
-    m <- matrix(nrow = pool, ncol = length(s_res))
+    m <- matrix(nrow = pool, ncol = length(s_res) + 1)
     roll_m <- matrix(nrow = pool, ncol = length(s_roll))
-    colnames(m) <- names(s_res)
+    colnames(m) <- c(names(s_res), "CumSum")
     rownames(m) <- paste0("R", 1:pool, "|")
     colnames(roll_m) <- names(s_roll)
     rownames(roll_m) <- paste0("R", 1:pool, "|")
@@ -111,21 +111,24 @@ extended_test <- function(pool, target = NA) {
     # Initialize while-loop parameters
     counter <- 1
     edge <- T
+    cumsum <- 0
 
     # Populate result matrix
     while (counter <= pool) {
         # Make the roll
         r <- roll(pool - counter + 1)
         roll <- calculate_roll_stats(r)
-
+        cumsum <- sum(c(cumsum, roll[["Result"]]["Hit"]))
         # Add roll info
         roll_m[counter, ] <- roll[["Roll"]]
-        m[counter, ] <- roll[["Result"]]
+        m[counter, ] <- c(roll[["Result"]], cumsum)
+
 
         # Glitch reroll prompt
         if ((m[counter, "Glitch"] > 0) & edge) {
             # Give information
-            print(m[counter, ])
+
+            print(m[complete.cases(m), ])
             print(c("Total hits" = sum(m[, "Hit"], na.rm = T), "Total glitches" = sum(m[, "Glitch"] > 0, na.rm = T)))
             message(ifelse(m[counter, "Glitch"] > 1, yes = "Critical Glitch!", no = "Glitch"))
             # Prompt
@@ -155,7 +158,7 @@ extended_test <- function(pool, target = NA) {
         counter <- counter + 1
     }
 
-    sums <- colSums(m, na.rm = T)
+    sums <- colSums(m[,-5], na.rm = T)
     sums["Glitch"] <- sum(m[, "Glitch"] > 0, na.rm = T)
 
     # Remove any full NA rows
@@ -199,7 +202,7 @@ prompt_function <- function(msg = "Default message.") {
 
 
 help_message <- function() {
-    message("Param 1: Task to run [help|extended|roll|simple_roll|edge_roll|roll_prob]")
+    message("Param 1: Task to run [help|extended|roll|simple|edge_roll|roll_prob]")
     message("Param 2: Amount of dice to roll")
     message("Param 3: Target hit amount for extended test OR Dice type for roll/simple_roll")
 }
@@ -216,7 +219,7 @@ if (!interactive()) {
         "help"        = help_message(),
         "extended"    = pretty_print(extended_test(pool = dice, target = target)),
         "roll"        = print(calculate_roll_stats(roll(n = dice, type = type))),
-        "simple_roll" = print(roll_simple(n = dice, type = type), row.names = F),
+        "simple" = print(roll_simple(n = dice, type = type), row.names = F),
         "edge_roll"   = pretty_print(edge_roll(dice)),
         "roll_prob"   = print(cumulative_prob_of_hits(target, dice)),
         help_message()

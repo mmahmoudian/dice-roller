@@ -1,0 +1,11 @@
+[package]
+name = "dice-roller"
+version = "0.1.0"
+edition = "2021"
+authors = ["Niklas Paulin naklis@hotmail.com"]
+description = "A dice-rolling interface for the Shadowrun board game"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.5"
+iced = "0.8.0"

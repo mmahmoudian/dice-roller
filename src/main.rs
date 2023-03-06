@@ -1,5 +1,5 @@
 use iced::widget::{button, column, row, text};
-use iced::{Sandbox, Settings, Element};
+use iced::{Element, Sandbox, Settings};
 
 mod roll_logic;
 
@@ -18,13 +18,12 @@ pub enum Message {
 }
 
 impl Sandbox for DiceRoller {
-
     type Message = Message;
 
     fn new() -> Self {
         Self {
             dice: 0,
-            result: String::from("")
+            result: String::from(""),
         }
     }
 
@@ -33,7 +32,6 @@ impl Sandbox for DiceRoller {
     }
 
     fn view(self: &DiceRoller) -> Element<Message> {
-
         // vertical layout
         column![
             //horizontal layout for buttons in first row
@@ -48,10 +46,12 @@ impl Sandbox for DiceRoller {
                 button("Roll").on_press(Message::Roll),
                 // Perform extended test
                 button("Extended").on_press(Message::Extended),
-            ].spacing(10),
+            ]
+            .spacing(10),
             // Roll result as next row
             text(&self.result).size(25),
-        ].into()
+        ]
+        .into()
     }
 
     fn update(&mut self, message: Message) {
@@ -69,7 +69,7 @@ impl Sandbox for DiceRoller {
             Message::Extended => {
                 let mut rounds = self.dice;
                 let mut round_res = Vec::new();
-                while rounds > 0{
+                while rounds > 0 {
                     let r = roll_logic::roll(rounds, 6);
                     let res = roll_logic::simple_print(&r);
                     round_res.push(res);

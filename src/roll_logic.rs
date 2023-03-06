@@ -19,16 +19,16 @@ pub fn simple_print(res: &Vec<i32>) -> String {
     let miss_percentage: f32 = res[0] as f32 / total as f32;
     let diff = hits - misses;
     let mut status: String = String::new();
-    
+
     if miss_percentage >= 0.5 {
         status = String::from("!");
     }
-    
+
     if diff <= 0 {
-        status += "!";        
+        status += "!";
     }
 
-    return format!("{}/{}/{}\t\t{}", hits, misses, total, status)
+    return format!("{}/{}/{}\t{}", hits, misses, total, status);
 }
 
 fn count_hits(rolls: &Vec<i32>) -> i32 {
@@ -44,10 +44,9 @@ fn count_hits(rolls: &Vec<i32>) -> i32 {
 //     print!("{}", name);
 //     std::io::stdout().flush().unwrap();
 //     std::io::stdin().read_line(&mut line).expect("Error: Could not read a line");
- 
+
 //     return line.trim().to_string()
 // }
-
 
 // fn main() {
 //     let side: i32 = 6;
@@ -56,7 +55,7 @@ fn count_hits(rolls: &Vec<i32>) -> i32 {
 //         if num.eq("exit") {
 //             break;
 //         }
-        
+
 //         if num.contains("*") {
 //             let split_result: Vec<&str> = num.split("*").collect();
 //             let mut r = split_result[0].parse().unwrap();

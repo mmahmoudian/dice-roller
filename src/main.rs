@@ -5,7 +5,7 @@ mod roll_logic;
 
 struct DiceRoller {
     // should be the dice roll
-    value: i32,
+    dice: i32,
     result: String,
 }
 
@@ -23,7 +23,7 @@ impl Sandbox for DiceRoller {
 
     fn new() -> Self {
         Self {
-            value: 0,
+            dice: 0,
             result: String::from("")
         }
     }
@@ -41,7 +41,7 @@ impl Sandbox for DiceRoller {
                 // increment number of dice on press
                 button("+").on_press(Message::IncrementPressed),
                 // show number of dice to roll in between buttons
-                text(self.value).size(25),
+                text(self.dice).size(25),
                 // decrement number of dice
                 button("-").on_press(Message::DecrementPressed),
                 // Perform the roll
@@ -57,17 +57,17 @@ impl Sandbox for DiceRoller {
     fn update(&mut self, message: Message) {
         match message {
             Message::IncrementPressed => {
-                self.value += 1;
+                self.dice += 1;
             }
             Message::DecrementPressed => {
-                self.value -= 1;
+                self.dice -= 1;
             }
             Message::Roll => {
-                let res = roll_logic::roll(self.value, 6);
+                let res = roll_logic::roll(self.dice, 6);
                 self.result = roll_logic::simple_print(&res);
             }
             Message::Extended => {
-                let mut rounds = self.value;
+                let mut rounds = self.dice;
                 let mut round_res = Vec::new();
                 while rounds > 0{
                     let r = roll_logic::roll(rounds, 6);

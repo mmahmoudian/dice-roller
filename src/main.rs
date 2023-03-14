@@ -1,12 +1,11 @@
 use iced::widget::{button, column, row, text};
-use iced::{Element, Sandbox, Settings};
-
+use iced::{window, Element, Sandbox, Settings};
 mod roll_logic;
 
 struct DiceRoller {
     // should be the dice roll
     dice: i32,
-    result: String,
+    result: (String, String),
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -23,7 +22,7 @@ impl Sandbox for DiceRoller {
     fn new() -> Self {
         Self {
             dice: 0,
-            result: String::from(""),
+            result: (String::from(""), String::from("")),
         }
     }
 
@@ -47,40 +46,58 @@ impl Sandbox for DiceRoller {
                 // Perform extended test
                 button("Extended").on_press(Message::Extended),
             ]
-            .spacing(10),
-            // Roll result as next row
-            text(&self.result).size(25),
+            .spacing(20),
+            row![text(&self.result.0).size(25), text(&self.result.1).size(25),].spacing(20)
         ]
         .into()
     }
 
     fn update(&mut self, message: Message) {
+        let mut round_res = Vec::new();
+        let mut round_notes = Vec::new();
+        round_res.push(String::from("Hit/Miss/Total"));
+        round_notes.push(String::from("Glitch Status"));
         match message {
             Message::IncrementPressed => {
                 self.dice += 1;
             }
             Message::DecrementPressed => {
-                self.dice -= 1;
+                if self.dice > 0 {
+                    self.dice -= 1;
+                }
             }
             Message::Roll => {
-                let res = roll_logic::roll(self.dice, 6);
-                self.result = roll_logic::simple_print(&res);
+                if self.dice > 0 {
+                    let r = roll_logic::roll(self.dice, 6);
+                    let res = roll_logic::simple_print(&r);
+                    round_res.push(res.0);
+                    round_notes.push(res.1);
+                }
             }
             Message::Extended => {
                 let mut rounds = self.dice;
-                let mut round_res = Vec::new();
                 while rounds > 0 {
                     let r = roll_logic::roll(rounds, 6);
                     let res = roll_logic::simple_print(&r);
-                    round_res.push(res);
+                    round_res.push(res.0);
+                    round_notes.push(res.1);
                     rounds -= 1;
                 }
-                self.result = round_res.join("\n");
             }
         }
+        self.result = (round_res.join("\n"), round_notes.join("\n"));
     }
 }
 
 pub fn main() -> iced::Result {
-    DiceRoller::run(Settings::default())
+    let settings = Settings {
+        window: window::Settings {
+            size: (300, 600),
+            resizable: true,
+            decorations: true,
+            ..Default::default()
+        },
+        ..Default::default()
+    };
+    DiceRoller::run(settings)
 }

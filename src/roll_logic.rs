@@ -33,6 +33,29 @@ pub fn simple_print(res: &Vec<i32>) -> (String, String) {
     return (format!("{}/{}/{}", hits, misses, total), status);
 }
 
+pub fn roll_result(res: &Vec<i32>) -> ((i32, i32, i32), String) {
+    let hits = count_hits(res);
+    let misses = res[0];
+    let total: i32 = res.iter().sum();
+    let miss_percentage: f32 = res[0] as f32 / total as f32;
+    let diff = hits - misses;
+    let mut status: String = String::from("");
+    let result = (hits, misses, total);
+
+    if diff < 0 {
+        status += "!";
+        if miss_percentage >= 0.5 {
+            status += "!"
+        }
+    }
+
+
+
+
+    return (result, status);
+}
+
+
 fn count_hits(rolls: &Vec<i32>) -> i32 {
     let mut count = 0;
     for i in 4..6 {

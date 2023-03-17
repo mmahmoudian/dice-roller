@@ -9,3 +9,8 @@ description = "A dice-rolling interface for the Shadowrun board game"
 [dependencies]
 rand = "0.8.5"
 iced = "0.8.0"
+
+[profile.release]
+lto = true
+strip = true
+panic = "abort"

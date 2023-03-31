@@ -55,7 +55,7 @@ calculate_roll_stats <- function(roll, miss = 1, hit = c(5, 6)) {
     misses <- sum(roll[miss])
     hits <- sum(roll[hit])
     total <- sum(roll)
-
+    type <- length(roll)
     # Glitch status calculation
     glitch <- (hits - misses) < 0
     critical_glitch <- (misses / total > 0.5) & glitch
@@ -144,8 +144,11 @@ extended_test <- function(pool, target = NA) {
                 rownames(m)[counter] <- paste0("R", counter, "| E")
                 rownames(roll_m)[counter] <- paste0("R", counter, "| E")
                 edge <- F
-                # Add 1 to dice pool = reroll. Happens only once since the edge flag is set to FALSE
-                counter <- counter - 1
+                # Re-roll in-place and add any hits to the result. Happens only once since the edge flag is set to FALSE
+                reroll_dice <- m[counter, "Pool"] - m[counter, "Hit"]
+                reroll <- calculate_roll_stats(roll(reroll_dice))
+                reroll_hits <- reroll[["Result"]]["Hit"]
+                m[counter, "Hit"] <- m[counter, "Hit"] + reroll_hits
             }
         }
 

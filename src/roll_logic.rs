@@ -58,7 +58,7 @@ pub fn roll_result(res: &Vec<i32>) -> ((i32, i32, i32), String) {
 
 fn count_hits(rolls: &Vec<i32>) -> i32 {
     let mut count = 0;
-    for i in 4..6 {
+    for i in 4..=6 {
         count += rolls[i]
     }
     count

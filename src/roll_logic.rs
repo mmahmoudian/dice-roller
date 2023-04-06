@@ -9,7 +9,7 @@ pub fn roll(n: i32, sides: i32) -> Vec<i32> {
         roll[(roll_result - 1) as usize] += 1;
     }
 
-    roll
+    return roll
 }
 
 pub fn simple_print(res: &Vec<i32>) -> (String, String) {
@@ -61,7 +61,8 @@ fn count_hits(rolls: &Vec<i32>) -> i32 {
     for i in 4..=6 {
         count += rolls[i]
     }
-    count
+    
+    return count
 }
 
 // fn prompt(name:&str) -> String {

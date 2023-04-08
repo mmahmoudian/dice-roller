@@ -58,7 +58,9 @@ pub fn roll_result(res: &Vec<i32>) -> ((i32, i32, i32), String) {
 
 fn count_hits(rolls: &Vec<i32>) -> i32 {
     let mut count = 0;
-    for i in 5..6 {
+     // the rolls are at indexes 0 to 5, so hits would be at idx positions 4 and 5
+     // therefore, the hit range is 4..6 (incl. & excl.) OR 4..=5 (incl. & incl.)
+    for i in 4..6 {
         count += rolls[i]
     }
     
